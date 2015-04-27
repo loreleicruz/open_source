@@ -1,3 +1,8 @@
-main2:main2.c
-	gcc main2.c -I/usr/include/mysql -lmysqlclient -o main2 -lm -std=c99
-	gcc populate.c -I/usr/include/mysql -lmysqlclient -o populate -lm
+all: readerprog producerprog
+
+readerprog:./reader/reader.c
+	gcc ./reader/reader.c -I/usr/include/mysql -lmysqlclient -o readerprog -lm -std=c99
+
+
+producerprog:./producer/producer.c
+	gcc ./producer/producer.c -I/usr/include/mysql -lmysqlclient -o producerprog -lm
