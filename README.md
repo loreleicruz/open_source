@@ -12,7 +12,7 @@ How this was setup
 6. need to make a commit for each pus hand do this using git commit -m 'First commit'
 7. push your changes to the repo using git push origin {branch}
  
-
+this is a thing
 
 
 How to run this
