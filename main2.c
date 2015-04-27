@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
+/* this is encase any of the mysql related functions fail 
+there must be an easy way to close them */
 void finish_with_error(MYSQL *con)
 {
   fprintf(stderr, "%s\n", mysql_error(con));
@@ -10,16 +12,35 @@ void finish_with_error(MYSQL *con)
   exit(1);        
 }
 
+char* receiveInput( char *s ){
+    scanf("%99s",s);
+    return s;
+}
+
+long int returnepoch(char * timestamp ){
+struct tm tm;
+time_t epoch;
+if ( strptime(timestamp, "%Y-%m-%d %H:%M:%S", &tm) != NULL )
+  {epoch = mktime(&tm);}
+else{printf("bad shit");}
+return epoch;
+}
+
 int main(int argc, char **argv)
 {      
+  char str[100];
   MYSQL *con = mysql_init(NULL);
   
+  //check is mysql is there
   if (con == NULL)
   {
     fprintf(stderr, "mysql_init() failed\n");
     exit(1);
-  }  
-  
+  }    
+
+  //connect to mysql using credentials put in
+
+  //input info for database stuff
   if (mysql_real_connect(con,"localhost","root","toor","process_control",0,NULL,0)==NULL)
   {
     finish_with_error(con);
@@ -48,16 +69,11 @@ int main(int argc, char **argv)
   MYSQL_ROW row;
   MYSQL_ROW row2;
 
-  char str[100];
-
   printf("\n Enter the filename :");
-
- scanf("%s", str);
-
   FILE *fp;
-  char *filename = str;
+  char *filename = receiveInput(str);
   filename=strcat(filename,".csv");
-  
+  long int epoch1;
 
 fp=fopen(filename,"w+");
  int j=0;
@@ -66,9 +82,9 @@ fp=fopen(filename,"w+");
     
     for(int i = 0; i < num_fields; i++) 
     { 
-
-      printf("%d,%s \n",j,row2[i] ? row2[i] : "NULL");
-      fprintf(fp,"%d,%s \n",j,row2[i] ? row2[i] : "NULL");
+      epoch1= returnepoch(row[i]);
+      printf("%ld,%ld,%s \n",epoch1 % 10000,epoch1,row2[i] ? row2[i] : "NULL");
+      fprintf(fp,"%ld,%ld,%s \n",epoch1 % 10000,epoch1,row2[i] ? row2[i] : "NULL");
     }  
     j++;
   }
